@@ -20,8 +20,8 @@ def create_state_action_map(data):
 	global A
 	global not_seen
 	for s, a, r, sp in data:
-		S.add(s)
-		A.add(a)
+		S.add(int(s))
+		A.add(int(a))
 		state_action_map[s][a].append((r, sp))
 
 	not_seen = ALL_STATES-S
@@ -127,7 +127,7 @@ def SarsaLambdaLearning(data):
 			
 			if spt != st_1:
 				continue
-
+			st, at, spt, st_1, at_1, spt_1 = int(st), int(at), int(spt), int(st_1), int(at_1), int(spt_1)
 			N[(st,at)] += 1
 			alpha = 1 / len(data)
 			# print (st)
@@ -173,9 +173,10 @@ def generateOutput(optimal_pi):
 def main():
     global state_action_map
     start_time = time.time()
-    data = np.array(pandas.read_csv(INPUT_FILE, dtype=int))
+    data = np.array(pandas.read_csv(INPUT_FILE, dtype=float))
     state_action_map = create_state_action_map(data)
     Q = SarsaLambdaLearning(data)
+    #import pdb; pdb.set_trace()
     optimal_policy = getPolicy(Q)
     print ('hi alex')
     handleUnVisited(optimal_policy)
