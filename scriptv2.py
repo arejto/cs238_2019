@@ -17,8 +17,8 @@ DEAD_STATE = 3
 TRANSPLANT_HEALTHY = 4
 
 # rewards associated with each action
-WAIT_REWARD  = 30
-DEATH_REWARD = -500
+WAIT_REWARD  = 5
+DEATH_REWARD = -50
 
 NUM_SAMPLES = 50000
 STARTING_NUM_HEARTS = MAX_HEARTS - 1
@@ -48,7 +48,7 @@ def read_data():
 decreases the reward of transplanting a heart as the supply of hearts goes down
 '''
 def opportunity_cost(num_hearts):
-	return .1 * (STARTING_NUM_HEARTS - (1.25 * (STARTING_NUM_HEARTS - num_hearts)))
+	return .004 * (STARTING_NUM_HEARTS - (2.15 * (STARTING_NUM_HEARTS - num_hearts)))
 
 
 def get_state_num(health, num_hearts, wait_time):
@@ -98,7 +98,7 @@ def main():
 	# not sure about this !!! TODO:
 	# transplant_reward = STARTING_NUM_HEARTS / 10
 
-	f =  open('outputv2.csv', 'a')
+	f =  open('outputv3.csv', 'a')
 	for i in range(NUM_SAMPLES):
 		if num_hearts < 1:
 			num_hearts = STARTING_NUM_HEARTS

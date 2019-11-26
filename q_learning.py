@@ -4,8 +4,8 @@ import numpy as np
 import collections
 import time
 
-INPUT_FILE  = 'outputv2.csv'
-OUTPUT_FILE = 'bogusv2.policy'
+INPUT_FILE  = 'outputv3.csv'
+OUTPUT_FILE = 'bogusv3.policy'
 ALL_STATES  = set(range(np.prod([10, 100, 5])))
 state_action_map = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
 S = set([])
