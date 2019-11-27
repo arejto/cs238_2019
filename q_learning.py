@@ -183,14 +183,14 @@ def generateOutput(optimal_pi, opt_dict):
 
 
 def get_states_actions(optimal_policy):
-	global S
-	states = list(S)
+	# global S
+	# states = list(S)
 	state_action_dict = collections.defaultdict()
-	for i in range(len(states)):
-		state = np.unravel_index(states[i], (MAX_HEALTHY_LEVEL, MAX_HEARTS, MAX_WEEKS_ON_LIST))
+	for i, policy in enumerate(optimal_policy):
+		state = np.unravel_index(i, (MAX_HEALTHY_LEVEL, MAX_HEARTS, MAX_WEEKS_ON_LIST))
 		#import pdb; pdb.set_trace()
 		try:
-			state_action_dict[state] = optimal_policy[i][0]
+			state_action_dict[state] = policy[0]
 		except IndexError:
 			import pdb; pdb.set_trace()
 	return state_action_dict
@@ -209,8 +209,9 @@ def main():
 	    handleUnVisited(optimal_policy)
     print (len(optimal_policy))
     print ('hi alex')
-    generateOutput(optimal_policy, None)
+    # generateOutput(optimal_policy, None)
     opt_state_action_dict = get_states_actions(optimal_policy)
+    print (len(opt_state_action_dict))
     generateOutput(None, opt_state_action_dict)
     print ('total_time: ', time.time()-start_time)
 if __name__ == '__main__':
