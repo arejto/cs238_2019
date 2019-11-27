@@ -6,6 +6,8 @@ import time
 
 INPUT_FILE  = 'outputv3.csv'
 OUTPUT_FILE = 'bogusv3.policy'
+OPT_ACT_FILE = 'state_opt_action.csv'
+
 ALL_STATES  = set(range(np.prod([10, 100, 5])))
 state_action_map = collections.defaultdict(lambda: collections.defaultdict(lambda: []))
 S = set([])
@@ -13,6 +15,9 @@ A = set([])
 lam = 1
 not_seen = None
 
+MAX_HEARTS        = 10
+MAX_WEEKS_ON_LIST = 100
+MAX_HEALTHY_LEVEL = 5
 
 def create_state_action_map(data):
 	global state_action_map
@@ -164,24 +169,49 @@ def handleUnVisited(policy):
 	else:
 		pass
 
-def generateOutput(optimal_pi):
-	with open(OUTPUT_FILE, 'w+') as f:
-		for action in optimal_pi[1:]:
-			f.write('%d\n' % action)
+def generateOutput(optimal_pi, opt_dict):
+	if optimal_pi is not None:
+		with open(OUTPUT_FILE, 'w+') as f:
+			for action in optimal_pi[1:]:
+				f.write('%d\n' % action)
+	else:
+		with open(OPT_ACT_FILE, 'w+') as f:
+			for state, action in opt_dict.items():
+				(health, num_hearts, wait_time) = state
+				f.write('{}, {}, {}, {}\n'.format(health, num_hearts, wait_time, action))
 
+
+
+def get_states_actions(optimal_policy):
+	global S
+	states = list(S)
+	state_action_dict = collections.defaultdict()
+	for i in range(len(states)):
+		state = np.unravel_index(states[i], (MAX_HEALTHY_LEVEL, MAX_HEARTS, MAX_WEEKS_ON_LIST))
+		#import pdb; pdb.set_trace()
+		try:
+			state_action_dict[state] = optimal_policy[i][0]
+		except IndexError:
+			import pdb; pdb.set_trace()
+	return state_action_dict
 
 def main():
     global state_action_map
     start_time = time.time()
     data = np.array(pandas.read_csv(INPUT_FILE, dtype=int))
     state_action_map = create_state_action_map(data)
-    Q = SarsaLambdaLearning(data)
-    optimal_policy = getPolicy(Q)
-    print ('hi alex')
-    handleUnVisited(optimal_policy)
+    try:
+    	optimal_policy = np.array(pandas.read_csv(OUTPUT_FILE, dtype=int))
+    except:
+	    Q = SarsaLambdaLearning(data)
+	    #import pdb; pdb.set_trace()
+	    optimal_policy = getPolicy(Q)
+	    handleUnVisited(optimal_policy)
     print (len(optimal_policy))
     print ('hi alex')
-    generateOutput(optimal_policy)
+    generateOutput(optimal_policy, None)
+    opt_state_action_dict = get_states_actions(optimal_policy)
+    generateOutput(None, opt_state_action_dict)
     print ('total_time: ', time.time()-start_time)
 if __name__ == '__main__':
     main()
